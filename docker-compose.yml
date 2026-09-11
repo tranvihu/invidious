@@ -8,12 +8,10 @@ version: "3"
 services:
 
   invidious:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
+    image: quay.io/invidious/invidious:latest
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3000:3000"
+      - "3000:3000"
     depends_on:
       invidious-db:
         condition: service_healthy
@@ -30,16 +28,27 @@ services:
           host: invidious-db
           port: 5432
         check_tables: true
+        default_home: Search
         # external_port:
         # domain:
         # https_only: false
         # statistics_enabled: false
-        hmac_key: "CHANGE_ME!!"
+        hmac_key: "youtube-rieng-cua-toi-123456-asdfgh"
+        invidious_companion:
+          - private_url: "http://companion:8282/companion"
+        invidious_companion_key: "Abc1234567890def"
     healthcheck:
       test: wget -nv --tries=1 --spider http://127.0.0.1:3000/api/v1/stats || exit 1
       interval: 30s
       timeout: 5s
       retries: 2
+
+  companion:
+    image: quay.io/invidious/invidious-companion:latest
+    container_name: companion
+    restart: unless-stopped
+    environment:
+      - SERVER_SECRET_KEY=Abc1234567890def
 
   invidious-db:
     image: docker.io/library/postgres:14
