@@ -21,7 +21,7 @@ services:
       # configuration options and their associated syntax:
       # https://github.com/iv-org/invidious/blob/master/config/config.example.yml
       INVIDIOUS_CONFIG: |
-        domain: "unable-drained-pushup.ngrok-free.dev"
+        domain: "desktop-6bp7cd6.tail1c89be.ts.net"
         https_only: true
         default_user_preferences:
           region: "VN"
