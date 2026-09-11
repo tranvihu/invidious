@@ -26,3 +26,4 @@
               push: true
               tags: ghcr.io/${{ env.REPO }}:latest
               build-args: release=1
+              provenance: false
