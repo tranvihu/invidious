@@ -8,7 +8,7 @@ version: "3"
 services:
 
   invidious:
-    image: quay.io/invidious/invidious:latest
+    image: ghcr.io/tranvihu/invidious:latest
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -28,7 +28,9 @@ services:
           host: invidious-db
           port: 5432
         check_tables: true
-        default_home: Search
+        default_home: "Search"
+        registration_enabled: true
+        captcha_enabled: false
         # external_port:
         # domain:
         # https_only: false

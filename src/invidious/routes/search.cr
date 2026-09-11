@@ -47,6 +47,14 @@ module Invidious::Routes::Search
       uri_params = env.params.body
     end
 
+    # BỘ LỌC TỪ KHÓA BẢO VỆ TRẺ EM
+    query_text = uri_params["q"]? || ""
+    bad_words = ["ma túy", "kinh dị", "18+", "tên-kênh-bạn-muốn-chặn"]
+
+    if bad_words.any? { |word| query_text.downcase.includes?(word) }
+      return error_template(403, "Cảnh báo: Từ khóa này chứa nội dung độc hại và đã bị chặn bởi hệ thống gia đình!")
+    end
+
     region = uri_params["region"]? || preferences.region
 
     query = Invidious::Search::Query.new(uri_params, :regular, region)
