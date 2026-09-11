@@ -10,6 +10,8 @@
           packages: write
         steps:
           - uses: actions/checkout@v4
+          - name: Doi ten toan bo thanh Kevin-utube
+            run: find src/invidious/views -type f -name "*.ecr" -exec sed -i 's/Invidious/Kevin-utube/g' {} +
           - name: Log in to GitHub Container Registry
             uses: docker/login-action@v3
             with:

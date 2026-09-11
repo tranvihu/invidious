@@ -21,6 +21,10 @@ services:
       # configuration options and their associated syntax:
       # https://github.com/iv-org/invidious/blob/master/config/config.example.yml
       INVIDIOUS_CONFIG: |
+        domain: "unable-drained-pushup.ngrok-free.dev"
+        https_only: true
+        default_user_preferences:
+          region: "VN"
         db:
           dbname: invidious
           user: kemal
@@ -28,10 +32,10 @@ services:
           host: invidious-db
           port: 5432
         check_tables: true
-        default_home: "Search"
+        default_home: "Trending"
         registration_enabled: true
         captcha_enabled: false
-        # external_port:
+        # external_port:impact
         # domain:
         # https_only: false
         # statistics_enabled: false
