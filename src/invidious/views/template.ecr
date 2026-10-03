@@ -170,41 +170,9 @@
         body.theme-cyber .pure-g { background: #1a1a2e !important; border: 1px solid #00ffff; border-radius: 10px; margin-top: 5px;}
         body.theme-cyber p, body.theme-cyber h1, body.theme-cyber h2, body.theme-cyber h3, body.theme-cyber h4 { color: #e0e0e0 !important; }
     </style>
-    <button id="kevin-theme-btn" onclick="toggleKevinTheme()">Đang tải...</button>
-    <script>
-        function toggleKevinTheme() {
-            let current = localStorage.getItem('kevin-theme') || 'kid';
-            let body = document.body;
-            let btn = document.getElementById('kevin-theme-btn');
-            
-            body.classList.remove('theme-kid', 'theme-cyber');
-            
-            if (current === 'kid') {
-                localStorage.setItem('kevin-theme', 'cyber');
-                body.classList.add('theme-cyber');
-                btn.innerHTML = '⚡ Đổi Sang: Trẻ Em';
-                btn.style.background = '#0b0f19';
-                btn.style.color = '#00ffff';
-                btn.style.borderColor = '#ff00ff';
-            } else {
-                localStorage.setItem('kevin-theme', 'kid');
-                body.classList.add('theme-kid');
-                btn.innerHTML = '🌈 Đổi Sang: Cực Ngầu';
-                btn.style.background = 'linear-gradient(45deg, #ff9a9e 0%, #fecfef 100%)';
-                btn.style.color = '#333';
-                btn.style.borderColor = '#fff';
-            }
-        }
-        
-        // Auto-load theme
-        (function() {
-            let savedTheme = localStorage.getItem('kevin-theme') || 'cyber';
-            // Switch to the opposite so toggle toggles it back to saved
-            localStorage.setItem('kevin-theme', savedTheme === 'kid' ? 'cyber' : 'kid');
-            toggleKevinTheme();
-        })();
-    </script>
+    <button id="kevin-theme-btn" onclick="toggleKevinTheme()">Loading...</button><script>function toggleKevinTheme() { var current = localStorage.getItem("kevin-theme") || "kid"; var body = document.body; var btn = document.getElementById("kevin-theme-btn"); body.classList.remove("theme-kid", "theme-cyber"); if (current === "kid") { localStorage.setItem("kevin-theme", "cyber"); body.classList.add("theme-cyber"); btn.innerHTML = "\u26A1 Giao Dien: Tre Em"; btn.style.background = "#0b0f19"; btn.style.color = "#00ffff"; btn.style.borderColor = "#ff00ff"; } else { localStorage.setItem("kevin-theme", "kid"); body.classList.add("theme-kid"); btn.innerHTML = "\uD83C\uDF08 Giao Dien: Cuc Ngau"; btn.style.background = "linear-gradient(45deg, #ff9a9e 0%, #fecfef 100%)"; btn.style.color = "#333"; btn.style.borderColor = "#fff"; } } (function() { var savedTheme = localStorage.getItem("kevin-theme") || "cyber"; localStorage.setItem("kevin-theme", savedTheme === "kid" ? "cyber" : "kid"); toggleKevinTheme(); })();</script>
     <!-- END KEVIN-UTUBE THEME SWITCHER -->
 </body>
 
 </html>
+
