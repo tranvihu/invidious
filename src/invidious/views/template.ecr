@@ -26,103 +26,100 @@
     <script src="/js/_helpers.js?v=<%= ASSET_COMMIT %>"></script>
 </head>
 
-<body class="<%= dark_mode.blank? ? "no" : dark_mode %>-theme">
+<body class="<%= dark_mode == "dark" ? "theme-dark" : "theme-light" %>">
     <span style="display:none" id="dark_mode_pref"><%= dark_mode %></span>
-    <div class="pure-g">
-        <div class="pure-u-1 pure-u-xl-20-24" id="contents">
-            <div class="pure-g navbar h-box">
-                <% if navbar_search %>
-                    <div class="pure-u-1 pure-u-md-4-24">
-                        <a href="/" class="index-link pure-menu-heading">Kevin-utube</a>
-                    </div>
-                    <div class="pure-u-1 pure-u-md-12-24 searchbar">
-                        <% autofocus = false %><%= rendered "components/search_box" %>
-                    </div>
-                <% end %>
+    <div id="app-layout">
+        <!-- SIDEBAR TRÁI -->
+        <aside id="custom-sidebar">
+            <div class="sidebar-logo">
+                <i class="icon ion-ios-play" style="color: #ff0000;"></i> Kevin-tube
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/" class="<%= env.get?("current_page") == "/" ? "active" : "" %>"><i class="icon ion-ios-home"></i> Trang chủ</a></li>
+                <li><a href="/feed/popular" class="<%= env.get?("current_page") == "/feed/popular" ? "active" : "" %>"><i class="icon ion-md-flame"></i> Phổ biến</a></li>
+                <li><a href="/feed/trending" class="<%= env.get?("current_page") == "/feed/trending" ? "active" : "" %>"><i class="icon ion-md-trending-up"></i> Thịnh hành</a></li>
+                <li><a href="/feed/subscriptions" class="<%= env.get?("current_page") == "/feed/subscriptions" ? "active" : "" %>"><i class="icon ion-ios-albums"></i> Đăng ký</a></li>
+                <hr>
+                <li><a href="/search?q=nhạc+thiếu+nhi"><i class="icon ion-md-happy"></i> Dành cho bé</a></li>
+                <li><a href="/search?q=khoa+học+khám+phá"><i class="icon ion-ios-book"></i> Học tập</a></li>
+                <li><a href="/search?q=bảng+xếp+hạng+âm+nhạc"><i class="icon ion-md-musical-notes"></i> Âm nhạc</a></li>
+            </ul>
+        </aside>
 
-                <div class="pure-u-1 pure-u-md-8-24 user-field">
-                    <% if env.get? "user" %>
-                        <div class="pure-u-1-4">
-                            <a id="toggle_theme" href="/toggle_theme?referer=<%= env.get?("current_page") %>" class="pure-menu-heading" title="<%= I18n.translate(locale, "toggle_theme") %>">
-                                <% if dark_mode == "dark" %>
-                                    <i class="icon ion-ios-sunny"></i>
-                                <% else %>
-                                    <i class="icon ion-ios-moon"></i>
-                                <% end %>
-                            </a>
-                        </div>
-                        <div class="pure-u-1-4">
-                            <a id="notification_ticker" title="<%= I18n.translate(locale, "Subscriptions") %>" href="/feed/subscriptions" class="pure-menu-heading">
-                                <% notification_count = env.get("user").as(Invidious::User).notifications.size %>
-                                <% if CONFIG.enable_user_notifications && notification_count > 0 %>
-                                    <span id="notification_count"><%= notification_count %></span> <i class="icon ion-ios-notifications"></i>
-                                <% else %>
-                                    <i class="icon ion-ios-notifications-outline"></i>
-                                <% end %>
-                            </a>
-                        </div>
-                        <div class="pure-u-1-4">
-                            <a title="<%= I18n.translate(locale, "Preferences") %>" href="/preferences?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
-                                <i class="icon ion-ios-cog"></i>
-                            </a>
-                        </div>
-                        <% if env.get("preferences").as(Preferences).show_nick %>
-                            <div class="pure-u-1-4" style="overflow: hidden; white-space: nowrap;">
-                                <span id="user_name"><%= HTML.escape(env.get("user").as(Invidious::User).email) %></span>
-                            </div>
+        <!-- NỘI DUNG CHÍNH -->
+        <main id="main-content">
+            <!-- THANH TÌM KIẾM & NÚT BẤM -->
+            <div class="top-nav">
+                <div style="width: 20px;"></div>
+                <div class="search-container">
+                    <% autofocus = false %><%= rendered "components/search_box" %>
+                </div>
+                <div class="user-actions">
+                    <a href="/toggle_theme?referer=<%= env.get?("current_page") %>" title="Đổi giao diện" class="btn-icon">
+                        <% if dark_mode == "dark" %>
+                            <i class="icon ion-ios-sunny"></i>
+                        <% else %>
+                            <i class="icon ion-ios-moon"></i>
                         <% end %>
-                        <div class="pure-u-1-4">
-                            <form action="/signout?referer=<%= env.get?("current_page") %>" method="post">
-                                <input type="hidden" name="csrf_token" value="<%= HTML.escape(env.get?("csrf_token").try &.as(String) || "") %>">
-                                <a class="pure-menu-heading" href="#">
-                                    <input style="all:unset" type="submit" value="<%= I18n.translate(locale, "Log out") %>">
-                                </a>
-                            </form>
-                        </div>
+                    </a>
+                    
+                    <% if env.get? "user" %>
+                        <a href="/feed/subscriptions" title="Đăng ký" class="btn-icon">
+                            <% notification_count = env.get("user").as(Invidious::User).notifications.size %>
+                            <% if CONFIG.enable_user_notifications && notification_count > 0 %>
+                                <span class="badge"><%= notification_count %></span>
+                            <% else %>
+                                <i class="icon ion-ios-notifications-outline"></i>
+                            <% end %>
+                        </a>
+                        <a href="/preferences?referer=<%= env.get?("current_page") %>" title="Cài đặt" class="btn-icon"><i class="icon ion-ios-cog"></i></a>
+                        <form action="/signout?referer=<%= env.get?("current_page") %>" method="post" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="<%= HTML.escape(env.get?("csrf_token").try &.as(String) || "") %>">
+                            <button type="submit" class="btn-icon" title="Đăng xuất"><i class="icon ion-md-log-out"></i></button>
+                        </form>
                     <% else %>
-                        <div class="pure-u-1-3">
-                            <a id="toggle_theme" href="/toggle_theme?referer=<%= env.get?("current_page") %>" class="pure-menu-heading" title="<%= I18n.translate(locale, "toggle_theme") %>">
-                                <% if dark_mode == "dark" %>
-                                    <i class="icon ion-ios-sunny"></i>
-                                <% else %>
-                                    <i class="icon ion-ios-moon"></i>
-                                <% end %>
-                            </a>
-                        </div>
-                        <div class="pure-u-1-3">
-                            <a title="<%= I18n.translate(locale, "Preferences") %>" href="/preferences?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
-                                <i class="icon ion-ios-cog"></i>
-                            </a>
-                        </div>
+                        <a href="/preferences?referer=<%= env.get?("current_page") %>" title="Cài đặt" class="btn-icon"><i class="icon ion-ios-cog"></i></a>
                         <% if CONFIG.login_enabled %>
-                            <div class="pure-u-1-3">
-                                <a href="/login?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
-                                    <%= I18n.translate(locale, "Log in") %>
-                                </a>
-                            </div>
+                            <a href="/login?referer=<%= env.get?("current_page") %>" class="btn-icon" style="width:auto; padding: 0 15px; border-radius: 20px; font-weight: 600; font-size: 13px;">Đăng nhập</a>
                         <% end %>
                     <% end %>
                 </div>
             </div>
 
-            <% if CONFIG.banner %>
-                <div class="h-box">
-                    <h3><%= CONFIG.banner %></h3>
+            <!-- HERO BANNER TỐI GIẢN (Only on homepages) -->
+            <% current_path = env.get?("current_page").try(&.as(String)) || "" %>
+            <% if current_path == "/" || current_path == "/feed/popular" || current_path == "/feed/trending" %>
+            <div id="kevin-custom-banner">
+                <div class="banner-content">
+                    <h1 class="banner-title" id="banner-title">Welcome to Kevin-tube</h1>
+                    <p class="banner-subtitle" id="banner-subtitle">Khám phá thế giới video an toàn cho gia đình bạn.</p>
                 </div>
+            </div>
+            <h2 class="section-title">Video đề xuất</h2>
             <% end %>
 
-            <% current_path = env.get?("current_page").try(&.as(String)) || "" %>
-<% if current_path == "/" || current_path == "/feed/trending" || current_path == "/feed/popular" || current_path == "/feed/subscriptions" %>
-    <div id="kevin-custom-banner">
-        <h1 class="banner-title">Welcome to Kevin-utube!</h1>
-        <p class="banner-subtitle">Explore, Learn, and Have Fun!</p>
-    </div>
-<% end %>
+            <!-- INVIDIOUS CONTENT INJECTED HERE -->
+            <div id="contents" class="video-grid-wrapper">
+                <% if CONFIG.banner %>
+                    <div class="h-box">
+                        <h3><%= CONFIG.banner %></h3>
+                    </div>
+                <% end %>
+                <%= content %>
+            </div>
 
-<%= content %>
-
-        </div>
+            <!-- CHÂN TRANG (FOOTER) -->
+            <footer class="simple-footer">
+                <div class="footer-links">
+                    <a href="/" class="footer-link">Trang chủ</a>
+                    <a href="/privacy" class="footer-link">Bảo mật</a>
+                    <a href="/licenses" class="footer-link">Bản quyền</a>
+                </div>
+                <p class="footer-copyright">© 2026 Kevin-tube. Giao diện tùy chỉnh đặc biệt.</p>
+            </footer>
+        </main>
     </div>
+
     <script src="/js/handlers.js?v=<%= ASSET_COMMIT %>"></script>
     <script src="/js/themes.js?v=<%= ASSET_COMMIT %>"></script>
     <% if env.get? "user" %>
@@ -139,54 +136,114 @@
         <script src="/js/notifications.js?v=<%= ASSET_COMMIT %>"></script>
         <% end %>
     <% end %>
-    <!-- KEVIN-UTUBE THEME SWITCHER -->
+
+    <!-- MINIMALIST CSS OVERRIDES -->
     <style>
-        #kevin-theme-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            border-radius: 30px;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+        #app-layout { display: flex; min-height: 100vh; }
+        
+        /* SIDEBAR */
+        #custom-sidebar { width: 220px; padding: 20px 15px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+        .sidebar-logo { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding-left: 10px; letter-spacing: -0.5px; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2px; }
+        .sidebar-menu hr { width: 100%; border: 0; border-top: 1px solid; opacity: 0.1; margin: 12px 0; }
+        .sidebar-menu a { text-decoration: none; font-size: 14px; display: flex; align-items: center; padding: 10px 12px; border-radius: 10px; transition: background 0.2s; }
+        .sidebar-menu i { font-size: 20px; margin-right: 15px; width: 24px; text-align: center; }
+        
+        /* MAIN CONTENT */
+        #main-content { flex: 1; padding: 15px 30px; display: flex; flex-direction: column; max-width: calc(100vw - 220px); }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; height: 50px; flex-shrink: 0; }
+        .search-container { position: relative; width: 100%; max-width: 500px; display: flex; }
+        
+        /* OVERRIDE INVIDIOUS SEARCH FORM */
+        .search-container form.pure-form { width: 100%; display: flex; margin: 0; }
+        .search-container form fieldset { width: 100%; margin: 0; padding: 0; border: none; }
+        .search-container input[type="search"] { width: 100%; border-radius: 40px 0 0 40px !important; padding: 10px 20px !important; font-size: 15px !important; outline: none; height: 42px; border-right: none !important; }
+        .search-container button[type="submit"] { border-radius: 0 40px 40px 0 !important; padding: 0 20px !important; cursor: pointer; display: flex; align-items: center; height: 42px; }
+        
+        .user-actions { display: flex; align-items: center; gap: 10px; }
+        .btn-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid; background: transparent; cursor: pointer; transition: all 0.2s; font-size: 18px; outline: none; text-decoration: none; }
+        .btn-icon:active { transform: scale(0.92); }
+        
+        /* BANNER */
+        #kevin-custom-banner { border-radius: 12px; padding: 30px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+        .banner-content { max-width: 600px; }
+        .banner-title { font-size: 1.8em; margin: 0 0 8px 0; font-weight: 800; letter-spacing: -0.5px; }
+        .banner-subtitle { font-size: 1.05em; margin: 0; opacity: 0.8; }
+        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; margin-top: 0; }
+        
+        /* OVERRIDE INVIDIOUS VIDEO GRIDS (The Magic Trick) */
+        .video-grid-wrapper .pure-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px 15px; width: 100%; }
+        .video-grid-wrapper .pure-u-1, .video-grid-wrapper .pure-u-sm-1-2, .video-grid-wrapper .pure-u-md-1-3, .video-grid-wrapper .pure-u-lg-1-4 { width: auto !important; max-width: none !important; flex: none !important; }
+        
+        /* VIDEO CARD STYLE */
+        .video-grid-wrapper .thumbnail { border-radius: 12px !important; transition: border-radius 0.2s; }
+        .video-grid-wrapper a:hover .thumbnail { border-radius: 4px !important; }
+        .video-card-row { margin-top: 8px !important; }
+        .video-card-row p { font-size: 14px; font-weight: 600; line-height: 1.4; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .channel-name { font-size: 13px !important; opacity: 0.7; font-weight: normal !important; margin-top: 4px !important; }
+        .video-data { font-size: 12px !important; opacity: 0.6; font-weight: normal !important; }
+        
+        /* FOOTER */
+        .simple-footer { margin-top: auto; padding: 25px 0 10px 0; border-top: 1px solid; text-align: center; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+        .footer-links { display: flex; justify-content: center; gap: 15px; font-weight: 600; }
+        .footer-links a { text-decoration: none; transition: opacity 0.2s; }
+        .footer-links a:hover { opacity: 1; text-decoration: underline; }
+        .footer-copyright { margin: 0; opacity: 0.6; }
+        
+        /* LIGHT THEME */
+        body.theme-light { background: #fdfdfd; color: #0f0f0f; }
+        body.theme-light #custom-sidebar { background: #ffffff; border-right: 1px solid #eaeaea; }
+        body.theme-light .sidebar-logo { color: #0f0f0f; }
+        body.theme-light .sidebar-menu a { color: #0f0f0f; }
+        body.theme-light .sidebar-menu a:hover, body.theme-light .sidebar-menu a.active { background: #f2f2f2; font-weight: 600; }
+        body.theme-light .search-container input[type="search"] { background: #ffffff; border: 1px solid #cccccc; color: #0f0f0f; box-shadow: inset 0 1px 2px #eee; }
+        body.theme-light .search-container input[type="search"]:focus { border-color: #1c62b9; }
+        body.theme-light .search-container button[type="submit"] { background: #f8f8f8; border: 1px solid #cccccc; color: #333; }
+        body.theme-light .search-container button[type="submit"]:hover { background: #f0f0f0; }
+        body.theme-light .btn-icon { color: #0f0f0f; border-color: #e5e5e5; }
+        body.theme-light .btn-icon:hover { background: #f2f2f2; border-color: #ccc; }
+        body.theme-light #kevin-custom-banner { background: #f4f6f8; }
+        body.theme-light .banner-title { color: #0f0f0f; }
+        body.theme-light .banner-subtitle { color: #606060; }
+        body.theme-light .simple-footer { border-color: #eaeaea; }
+        body.theme-light .footer-links a { color: #555; }
+        body.theme-light a { color: #0f0f0f; }
+        
+        /* DARK THEME */
+        body.theme-dark { background: #0f0f0f; color: #f1f1f1; }
+        body.theme-dark #custom-sidebar { background: #0f0f0f; border-right: 1px solid #272727; }
+        body.theme-dark .sidebar-logo { color: #fff; }
+        body.theme-dark .sidebar-menu a { color: #f1f1f1; }
+        body.theme-dark .sidebar-menu a:hover, body.theme-dark .sidebar-menu a.active { background: #272727; font-weight: 600; }
+        body.theme-dark .search-container input[type="search"] { background: #121212; border: 1px solid #303030; color: #fff; box-shadow: inset 0 1px 2px #000; }
+        body.theme-dark .search-container input[type="search"]:focus { border-color: #1c62b9; }
+        body.theme-dark .search-container button[type="submit"] { background: #222222; border: 1px solid #303030; color: #fff; }
+        body.theme-dark .search-container button[type="submit"]:hover { background: #272727; }
+        body.theme-dark .btn-icon { color: #f1f1f1; border-color: #3f3f3f; }
+        body.theme-dark .btn-icon:hover { background: #272727; border-color: #555; }
+        body.theme-dark #kevin-custom-banner { background: #212121; }
+        body.theme-dark .banner-title { color: #fff; }
+        body.theme-dark .banner-subtitle { color: #aaaaaa; }
+        body.theme-dark .simple-footer { border-color: #272727; }
+        body.theme-dark .footer-links a { color: #aaa; }
+        body.theme-dark a { color: #f1f1f1; }
+        
+        /* Fix overlapping issues on mobile */
+        @media (max-width: 768px) {
+            #app-layout { flex-direction: column; }
+            #custom-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #ccc; padding: 10px; flex-direction: row; overflow-x: auto; }
+            .sidebar-logo { margin-bottom: 0; margin-right: 20px; }
+            .sidebar-menu { flex-direction: row; gap: 10px; }
+            .sidebar-menu hr { display: none; }
+            .sidebar-menu a { white-space: nowrap; padding: 5px 10px; }
+            #main-content { max-width: 100%; padding: 15px; }
+            .top-nav { gap: 10px; }
+            .search-container { flex: 1; }
+            .video-grid-wrapper .pure-g { grid-template-columns: 1fr; }
         }
-
-                /* BANNER STYLES */
-        #kevin-custom-banner { display: none; width: 100%; border-radius: 20px; padding: 40px 20px; margin: 20px 0; text-align: center; }
-        body.theme-kid #kevin-custom-banner { display: block; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        body.theme-kid #kevin-custom-banner .banner-title { color: #ff4081; font-family: 'Comic Sans MS', sans-serif; font-size: 2.5em; margin: 0; text-shadow: 2px 2px 0px #fff; }
-        body.theme-kid #kevin-custom-banner .banner-subtitle { color: #0288d1; font-size: 1.2em; margin-top: 10px; font-weight: bold; }
-        
-        body.theme-cyber #kevin-custom-banner { display: block; background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); box-shadow: 0 0 20px #00ffff; border: 2px solid #00ffff; }
-        body.theme-cyber #kevin-custom-banner .banner-title { color: #ff00ff; font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 2.5em; margin: 0; letter-spacing: 3px; text-shadow: 0 0 10px #ff00ff; }
-        body.theme-cyber #kevin-custom-banner .banner-subtitle { color: #00ffff; font-size: 1.2em; margin-top: 10px; letter-spacing: 2px; }
-
-        /* KID THEME */
-        body.theme-kid { background-color: #e0f7fa !important; font-family: 'Comic Sans MS', 'Nunito', sans-serif !important; }
-        body.theme-kid .pure-menu-heading { color: #ff4081 !important; font-size: 22px; font-weight: 900; }
-        body.theme-kid .thumbnail { border-radius: 20px !important; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        body.theme-kid .thumbnail:hover { transform: scale(1.05); }
-        body.theme-kid a { color: #0288d1 !important; font-weight: bold; }
-        
-        /* CYBERPUNK THEME */
-        body.theme-cyber { background-color: #0b0f19 !important; color: #00ffff !important; font-family: 'Segoe UI', Tahoma, sans-serif !important; }
-        body.theme-cyber .pure-menu-heading { color: #00ffff !important; text-shadow: 0 0 8px #00ffff; }
-        body.theme-cyber .thumbnail { border-radius: 10px !important; box-shadow: 0 0 10px #ff00ff; border: 2px solid #ff00ff; transition: transform 0.3s; }
-        body.theme-cyber .thumbnail:hover { transform: scale(1.05); box-shadow: 0 0 20px #00ffff; }
-        body.theme-cyber a { color: #ff00ff !important; }
-        body.theme-cyber p, body.theme-cyber h1, body.theme-cyber h2, body.theme-cyber h3, body.theme-cyber h4 { color: #e0e0e0 !important; }</style>
-    <button id="kevin-theme-btn">Loading...</button><script src="/js/kevin_theme.js?v=<%= ASSET_COMMIT %>"></script>
-    <!-- END KEVIN-UTUBE THEME SWITCHER -->
+    </style>
 </body>
-
 </html>
-
-
-
-
 
