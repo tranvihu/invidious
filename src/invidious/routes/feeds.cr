@@ -35,7 +35,7 @@ module Invidious::Routes::Feeds
     locale = env.get("preferences").as(Preferences).locale
 
     if CONFIG.popular_enabled
-      templated "feeds/popular"
+      env.redirect "/feed/trending"
     else
       message = I18n.translate(locale, "The Popular feed has been disabled by the administrator.")
       templated "message"
@@ -455,3 +455,4 @@ module Invidious::Routes::Feeds
     env.response.status_code = 200
   end
 end
+
