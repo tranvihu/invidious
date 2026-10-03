@@ -56,12 +56,12 @@ module Invidious::Routes::Watch
     # ==============================================================
     enable_family_filter = false # Set to true to ENABLE
     if enable_family_filter
-      user = env.get?("user")
-      if !user
+      kevin_user = env.get?("user")
+      if !kevin_user
         return env.redirect "/login"
       end
       
-      user_email = user.as(Invidious::User).email.downcase
+      user_email = kevin_user.as(Invidious::User).email.downcase
       if user_email.includes?("kid") || user_email.includes?("be_") || user_email.includes?("con")
          blocked_words = ["kinh di", "ma quy", "18+", "bao luc", "giet", "mau", "kinh hoang", "ma am"]
       end
@@ -77,6 +77,23 @@ module Invidious::Routes::Watch
       return error_template(500, ex)
     end
 
+      # ==============================================================
+      # KEVIN-UTUBE: CHECK VIDEO TITLE
+      # ==============================================================
+      if enable_family_filter
+        kevin_user2 = env.get?("user")
+        if kevin_user2
+          user_email2 = kevin_user2.as(Invidious::User).email.downcase
+          if user_email2.includes?("kid") || user_email2.includes?("be_") || user_email2.includes?("con")
+            blocked_words2 = ["kinh di", "ma quy", "18+", "bao luc", "giet", "mau", "kinh hoang", "ma am"]
+            video_title = video.title.downcase
+            if blocked_words2.any? { |w| video_title.includes?(w) }
+               return error_template(403, "Video nay khong phu hop voi tre em (Kevin-tube Filter)")
+            end
+          end
+        end
+      end
+      # ==============================================================
     if preferences.annotations_subscribed &&
        subscriptions.includes?(video.ucid) &&
        (env.params.query["iv_load_policy"]? || "1") == "1"
@@ -353,4 +370,6 @@ module Invidious::Routes::Watch
     end
   end
 end
+
+
 

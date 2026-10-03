@@ -28,12 +28,12 @@ module Invidious::Routes::Search
     # ==============================================================
     enable_family_filter = false # Set to true to ENABLE
     if enable_family_filter
-      user = env.get?("user")
-      if !user
+      kevin_user = env.get?("user")
+      if !kevin_user
         return env.redirect "/login"
       end
       
-      user_email = user.as(Invidious::User).email.downcase
+      user_email = kevin_user.as(Invidious::User).email.downcase
       if user_email.includes?("kid") || user_email.includes?("be_") || user_email.includes?("con")
          blocked_words = ["kinh di", "ma quy", "18+", "bao luc", "giet", "mau", "kinh hoang", "ma am"]
          if blocked_words.any? { |w| query.to_s.downcase.includes?(w) }
@@ -156,4 +156,5 @@ module Invidious::Routes::Search
     templated "hashtag"
   end
 end
+
 
