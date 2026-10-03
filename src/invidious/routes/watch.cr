@@ -51,6 +51,23 @@ module Invidious::Routes::Watch
     env.params.query.delete_all("listen")
 
     begin
+    # ==============================================================
+    # KEVIN-UTUBE: RBAC & FAMILY FILTER (DISABLED BY DEFAULT)
+    # ==============================================================
+    enable_family_filter = false # Set to true to ENABLE
+    if enable_family_filter
+      user = env.get?("user")
+      if !user
+        return env.redirect "/login"
+      end
+      
+      user_email = user.as(Invidious::User).email.downcase
+      if user_email.includes?("kid") || user_email.includes?("be_") || user_email.includes?("con")
+         blocked_words = ["kinh di", "ma quy", "18+", "bao luc", "giet", "mau", "kinh hoang", "ma am"]
+      end
+    end
+    # ==============================================================
+
       video = get_video(id, region: params.region)
     rescue ex : NotFoundException
       LOGGER.error("get_video not found: #{id} : #{ex.message}")
@@ -336,3 +353,4 @@ module Invidious::Routes::Watch
     end
   end
 end
+

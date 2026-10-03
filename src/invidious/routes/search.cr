@@ -20,8 +20,28 @@ module Invidious::Routes::Search
   def self.results(env)
     locale = env.get("preferences").as(Preferences).locale
 
-    query = env.params.query["search_query"]?
+        query = env.params.query["search_query"]?
     query ||= env.params.query["q"]?
+
+    # ==============================================================
+    # KEVIN-UTUBE: RBAC & FAMILY FILTER SEARCH (DISABLED BY DEFAULT)
+    # ==============================================================
+    enable_family_filter = false # Set to true to ENABLE
+    if enable_family_filter
+      user = env.get?("user")
+      if !user
+        return env.redirect "/login"
+      end
+      
+      user_email = user.as(Invidious::User).email.downcase
+      if user_email.includes?("kid") || user_email.includes?("be_") || user_email.includes?("con")
+         blocked_words = ["kinh di", "ma quy", "18+", "bao luc", "giet", "mau", "kinh hoang", "ma am"]
+         if blocked_words.any? { |w| query.to_s.downcase.includes?(w) }
+             return error_template(403, "Tu khoa tim kiem khong an toan cho be (Kevin-tube Filter)")
+         end
+      end
+    end
+    # ==============================================================
 
     page = env.params.query["page"]?
 
@@ -136,3 +156,4 @@ module Invidious::Routes::Search
     templated "hashtag"
   end
 end
+
