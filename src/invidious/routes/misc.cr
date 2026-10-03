@@ -8,20 +8,20 @@ module Invidious::Routes::Misc
 
     case preferences.default_home
     when "Popular"
-      env.redirect "/feed/trending"
+      env.redirect "/feed/trending?region=VN"
     when "Trending"
-      env.redirect "/feed/trending"
+      env.redirect "/feed/trending?region=VN"
     when "Subscriptions"
       if user
         env.redirect "/feed/subscriptions"
       else
-        env.redirect "/feed/trending"
+        env.redirect "/feed/trending?region=VN"
       end
     when "Playlists"
       if user
         env.redirect "/feed/playlists"
       else
-        env.redirect "/feed/trending"
+        env.redirect "/feed/trending?region=VN"
       end
     else
       templated "search_homepage", navbar_search: false
@@ -58,4 +58,5 @@ module Invidious::Routes::Misc
     env.redirect "https://#{instance_url}#{referer}"
   end
 end
+
 

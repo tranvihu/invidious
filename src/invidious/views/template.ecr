@@ -37,14 +37,13 @@
             </div>
             </a>
             <ul class="sidebar-menu">
-                <li><a href="/" class="<%= env.get?("current_page") == "/" ? "active" : "" %>"><i class="icon ion-ios-home"></i> Trang chủ</a></li>
-                <li><a href="/feed/popular" class="<%= env.get?("current_page") == "/feed/popular" ? "active" : "" %>"><i class="icon ion-md-flame"></i> Phổ biến</a></li>
-                <li><a href="/feed/trending" class="<%= env.get?("current_page") == "/feed/trending" ? "active" : "" %>"><i class="icon ion-md-trending-up"></i> Thịnh hành</a></li>
-                <li><a href="/feed/subscriptions" class="<%= env.get?("current_page") == "/feed/subscriptions" ? "active" : "" %>"><i class="icon ion-ios-albums"></i> Đăng ký</a></li>
+                <li><a href="/" class="<%= (env.get?("current_page") == "/" || env.get?("current_page") == "/feed/trending") && env.params.query["region"]? != "US" ? "active" : "" %>"><span style="margin-right:15px; font-size:18px">🇻🇳</span> Việt Nam</a></li>
+                <li><a href="/feed/trending?region=US" class="<%= env.params.query["region"]? == "US" ? "active" : "" %>"><span style="margin-right:15px; font-size:18px">🌍</span> Thế giới</a></li>
+                <li><a href="/feed/subscriptions" class="<%= env.get?("current_page") == "/feed/subscriptions" ? "active" : "" %>"><span style="margin-right:15px; font-size:18px">👺</span> Đăng ký</a></li>
                 <hr>
-                <li><a href="/search?q=nhạc+thiếu+nhi"><i class="icon ion-md-happy"></i> Dành cho bé</a></li>
-                <li><a href="/search?q=khoa+học+khám+phá"><i class="icon ion-ios-book"></i> Học tập</a></li>
-                <li><a href="/search?q=bảng+xếp+hạng+âm+nhạc"><i class="icon ion-md-musical-notes"></i> Âm nhạc</a></li>
+                <li><a href="/search?q=nhạc+thiếu+nhi"><span style="margin-right:15px; font-size:18px">📑</span> Dành cho bé</a></li>
+                <li><a href="/search?q=khoa+học+khám+phá"><span style="margin-right:15px; font-size:18px">🎄</span> Học tập</a></li>
+                <li><a href="/search?q=bảng+xếp+hạng+âm+nhạc"><span style="margin-right:15px; font-size:18px">🎵</span> Âm nhạc</a></li>
             </ul>
         </aside>
 
