@@ -9,8 +9,6 @@
 </title>
 <% end %>
 
-
-
 <div class="pure-g">
 <% if popular_videos.empty? %>
     <% trending, _ = fetch_trending("Default", env.get("preferences").as(Preferences).region, locale) %>
@@ -18,12 +16,10 @@
         <%= rendered "components/item" %>
     <% end %>
 <% else %>
-<% popular_videos.each do |item| %>
+<% popular_videos.each do |item} %>
     <%= rendered "components/item" %>
 <% end %>
 <% end %>
 </div>
 
 <script src="/js/watched_indicator.js"></script>
-
-
